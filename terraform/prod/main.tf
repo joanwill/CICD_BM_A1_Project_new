@@ -41,7 +41,7 @@ resource "azurerm_app_service" "prod-webapp" {
   app_settings = {
     WEBSITES_PORT = "80"
     DOCKER_REGISTRY_SERVER_URL      = "https://${azurerm_container_registry.prod-acr.login_server}"
-    DOCKER_REGISTRY_SERVER_USERNAME = azurerm_container_registry.acr.admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD = azurerm_container_registry.acr.admin_password
+    DOCKER_REGISTRY_SERVER_USERNAME = azurerm_container_registry.prod-acr.admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD = azurerm_container_registry.prod-acr.admin_password
   }
 }
