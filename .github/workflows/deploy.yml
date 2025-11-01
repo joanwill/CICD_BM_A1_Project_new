@@ -101,6 +101,13 @@ jobs:
         docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
         docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
 
+    - name: Build Flutter Web frontend Docker image
+      run: docker build -t bma1pregproject.azurecr.io/fancy-todo-frontend:latest -f Dockerfile .
+      working-directory: ./frontend
+
+    - name: Push frontend Docker image to ACR
+      run: docker push bma1pregproject.azurecr.io/fancy-todo-frontend:latest
+      
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
