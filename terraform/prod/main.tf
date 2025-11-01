@@ -65,13 +65,13 @@ resource "azurerm_cosmosdb_account" "prod-cosmos" {
 }
 
 resource "azurerm_cosmosdb_sql_database" "prod-db" {
-  name                = "todo-db"
+  name                = "Todo"
   resource_group_name = azurerm_resource_group.prod-rg.name
   account_name        = azurerm_cosmosdb_account.prod-cosmos.name
 }
 
 resource "azurerm_cosmosdb_sql_container" "prod-container" {
-  name                = "todo-items"
+  name                = "Todos"
   resource_group_name = azurerm_resource_group.prod-rg.name
   account_name        = azurerm_cosmosdb_account.prod-cosmos.name
   database_name       = azurerm_cosmosdb_sql_database.prod-db.name
