@@ -58,7 +58,9 @@ jobs:
       run: terraform state show azurerm_cosmosdb_sql_database.prod-db || terraform import azurerm_cosmosdb_sql_database.prod-db "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/Todo"
       working-directory: ./terraform/prod
 
-   
+    - name: Import existing Cosmos DB SQL container
+      run: terraform state show azurerm_cosmosdb_sql_container.prod-container || terraform import azurerm_cosmosdb_sql_container.prod-container "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/Todo/containers/Todos"
+      working-directory: ./terraform/prod
 
     - name: Terraform Plan (Prod)
       if: github.ref == 'refs/heads/release'
