@@ -3,9 +3,16 @@ import 'package:intl/intl.dart';
 import 'models/todo.dart';
 import 'services/api_client.dart';
 
-void main() {
-  runApp(const FancyTodoApp());
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(FancyTodoApp());
 }
+
+// void main() {
+//   runApp(const FancyTodoApp());
+// }
 
 class FancyTodoApp extends StatelessWidget {
   const FancyTodoApp({super.key});
@@ -98,8 +105,15 @@ class _TodoHomeState extends State<TodoHome> {
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, i) {
                         final t = items[i];
-                        final dueStr = t.due != null ? DateFormat.yMMMd().format(t.due!) : 'No due date';
-                        final priColor = [null, Colors.green, Colors.orange, Colors.red][t.priority];
+                        final dueStr = t.due != null
+                            ? DateFormat.yMMMd().format(t.due!)
+                            : 'No due date';
+                        final priColor = [
+                          null,
+                          Colors.green,
+                          Colors.orange,
+                          Colors.red
+                        ][t.priority];
                         return Material(
                           elevation: 1,
                           borderRadius: BorderRadius.circular(16),
@@ -111,7 +125,9 @@ class _TodoHomeState extends State<TodoHome> {
                             title: Text(
                               t.title,
                               style: TextStyle(
-                                decoration: t.isDone ? TextDecoration.lineThrough : null,
+                                decoration: t.isDone
+                                    ? TextDecoration.lineThrough
+                                    : null,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -119,8 +135,12 @@ class _TodoHomeState extends State<TodoHome> {
                               crossAxisAlignment: WrapCrossAlignment.center,
                               spacing: 8,
                               children: [
-                                if (t.description?.isNotEmpty == true) Text(t.description!),
-                                Chip(label: Text('P${t.priority}'), backgroundColor: priColor?.withOpacity(0.15)),
+                                if (t.description?.isNotEmpty == true)
+                                  Text(t.description!),
+                                Chip(
+                                    label: Text('P${t.priority}'),
+                                    backgroundColor:
+                                        priColor?.withOpacity(0.15)),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -137,8 +157,10 @@ class _TodoHomeState extends State<TodoHome> {
                                 if (k == 'delete') _delete(t);
                               },
                               itemBuilder: (_) => const [
-                                PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                                PopupMenuItem(
+                                    value: 'edit', child: Text('Edit')),
+                                PopupMenuItem(
+                                    value: 'delete', child: Text('Delete')),
                               ],
                             ),
                           ),
@@ -186,13 +208,16 @@ class _TodoDialogState extends State<TodoDialog> {
             children: [
               TextFormField(
                 controller: title,
-                decoration: const InputDecoration(labelText: 'Title', prefixIcon: Icon(Icons.title)),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                decoration: const InputDecoration(
+                    labelText: 'Title', prefixIcon: Icon(Icons.title)),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: desc,
-                decoration: const InputDecoration(labelText: 'Description', prefixIcon: Icon(Icons.notes)),
+                decoration: const InputDecoration(
+                    labelText: 'Description', prefixIcon: Icon(Icons.notes)),
                 minLines: 1,
                 maxLines: 3,
               ),
@@ -223,7 +248,9 @@ class _TodoDialogState extends State<TodoDialog> {
                       if (picked != null) setState(() => due = picked);
                     },
                     icon: const Icon(Icons.event),
-                    label: Text(due == null ? 'Due date' : DateFormat.yMMMd().format(due!)),
+                    label: Text(due == null
+                        ? 'Due date'
+                        : DateFormat.yMMMd().format(due!)),
                   ),
                 ],
               ),
@@ -232,7 +259,9 @@ class _TodoDialogState extends State<TodoDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel')),
         FilledButton.icon(
           onPressed: () {
             if (!_form.currentState!.validate()) return;

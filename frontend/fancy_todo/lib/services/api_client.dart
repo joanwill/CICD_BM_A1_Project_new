@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/todo.dart';
 
 class ApiClient {
   // Update for your environment
-  final String baseUrl;
-  ApiClient({this.baseUrl = 'https:///todo-api-carmen.azurewebsites.net'});
+  final String baseUrl =
+      dotenv.env['API_BASE_URL'] ?? 'https://todo-api-carmen.azurewebsites.net';
+  // final String baseUrl;
+  // ApiClient({this.baseUrl = 'https:///todo-api-carmen.azurewebsites.net'});
 
   Future<List<Todo>> listTodos() async {
     final resp = await http.get(Uri.parse('$baseUrl/api/todos'));
