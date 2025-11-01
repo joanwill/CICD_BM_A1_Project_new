@@ -55,11 +55,11 @@ jobs:
       working-directory: ./terraform/prod
 
     - name: Import existing Cosmos DB SQL database
-      run: terraform import azurerm_cosmosdb_sql_database.prod-db "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/todo-db"
+      run: terraform import azurerm_cosmosdb_sql_database.prod-db "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/Todo"
       working-directory: ./terraform/prod
 
     - name: Import existing Cosmos DB SQL container
-      run: terraform import azurerm_cosmosdb_sql_container.prod-container "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/todo-db/containers/todo-items"
+      run: terraform import azurerm_cosmosdb_sql_container.prod-container "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/todo-db/containers/Todos"
       working-directory: ./terraform/prod
 
     - name: Terraform Plan (Prod)
