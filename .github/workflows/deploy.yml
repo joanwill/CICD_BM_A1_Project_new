@@ -27,7 +27,7 @@ jobs:
 
     - name: Build and push image
       run: |
-        docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} .
+        docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
         docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
 
     - name: Deploy to Azure Web App
