@@ -51,7 +51,11 @@ jobs:
     - name: Import existing App Service
       run: terraform import azurerm_app_service.prod-webapp "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.Web/sites/todo-api-webapp-prod"
       working-directory: ./terraform/prod
-     
+      
+    - name: Import existing Cosmos DB account
+      run: terraform import azurerm_cosmosdb_account.prod-cosmos "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos"
+      working-directory: ./terraform/prod
+
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform plan -out=tfplan
