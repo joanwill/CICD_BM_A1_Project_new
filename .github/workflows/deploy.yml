@@ -40,6 +40,10 @@ jobs:
       run: terraform plan -out=tfplan
       working-directory: ./terraform/prod
 
+    - name: Import existing resource group
+      run: terraform import azurerm_resource_group.prod-rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod"
+      working-directory: ./terraform/prod
+
     - name: Terraform Apply (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform apply -auto-approve tfplan
