@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "rg" {
 resource "azurerm_app_service_plan" "plan" {
   name                = "todo-api-plan"
   location            = var.location
-  resource_group_name = "bm-a1cidcproject"
+  resource_group_name = azurerm_resource_group.rg.name
   kind                = "Linux"
   reserved            = true
 
