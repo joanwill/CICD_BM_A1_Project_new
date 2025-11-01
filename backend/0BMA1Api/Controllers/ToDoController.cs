@@ -107,5 +107,21 @@ namespace _0BMA1Api.Controllers
             var result = await Repo.UpdateAsync(updated);
             return Ok(result);
         }
+
+        [HttpGet("todos/{id}")]
+        [ProducesResponseType(typeof(TodoItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<TodoItem>> GetItemById(string id)
+        {
+            // You may need to provide a default or lookup for the partition key
+            var item = await Repo.GetAsync(id, "hotpartition"); // Replace "hotpartition" with dynamic if needed
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item);
+        }
     }
 }
