@@ -34,27 +34,27 @@ jobs:
     - name: Terraform Init (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform init
-      working-directory: ./terraform/prod
+      working-directory: ./terraform/dev
 
     - name: Import existing resource group
-      run: terraform import azurerm_resource_group.prod-rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod"
-      working-directory: ./terraform/prod
+      run: terraform import azurerm_resource_group.rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject"
+      working-directory: ./terraform/dev
 
     - name: Import existing App Service Plan
-      run: terraform import azurerm_app_service_plan.prod-plan "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.Web/serverFarms/todo-api-plan-prod"
-      working-directory: ./terraform/prod
+      run: terraform import azurerm_app_service_plan.plan "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.Web/serverFarms/todo-api-plan"
+      working-directory: ./terraform/dev
 
     - name: Import existing Container Registry
-      run: terraform import azurerm_container_registry.prod-acr "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.ContainerRegistry/registries/acrprodtdo"
-      working-directory: ./terraform/prod
+      run: terraform import azurerm_container_registry.acr "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.ContainerRegistry/registries/bma1pregproject"
+      working-directory: ./terraform/dev
     
-    - name: Import existing App Service
-      run: terraform import azurerm_app_service.prod-webapp "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.Web/sites/todo-api-webapp-prod"
-      working-directory: ./terraform/prod
+    # - name: Import existing App Service
+    #   run: terraform import azurerm_app_service.prod-webapp "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.Web/sites/todo-api-webapp-prod"
+    #   working-directory: ./terraform/prod
       
-    - name: Import existing Cosmos DB account
-      run: terraform import azurerm_cosmosdb_account.prod-cosmos "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos"
-      working-directory: ./terraform/prod
+    # - name: Import existing Cosmos DB account
+    #   run: terraform import azurerm_cosmosdb_account.prod-cosmos "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos"
+    #   working-directory: ./terraform/prod
 
   #  - name: Import existing Cosmos DB SQL database
    #   run: terraform import azurerm_cosmosdb_sql_database.prod-db "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/todo-db"
@@ -67,12 +67,12 @@ jobs:
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform plan -out=tfplan
-      working-directory: ./terraform/prod
+      working-directory: ./terraform/dev
 
     - name: Terraform Apply (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform apply -auto-approve tfplan
-      working-directory: ./terraform/prod
+      working-directory: ./terraform/dev
 
     # - name: Terraform Init (Prod)
     #   if: github.ref == 'refs/heads/release'
