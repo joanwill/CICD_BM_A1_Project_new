@@ -56,6 +56,10 @@ jobs:
       run: terraform import azurerm_cosmosdb_account.prod-cosmos "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos"
       working-directory: ./terraform/prod
 
+    - name: Import existing Cosmos DB SQL database
+      run: terraform import azurerm_cosmosdb_sql_database.prod-db "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/todo-db"
+      working-directory: ./terraform/prod
+
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform plan -out=tfplan
