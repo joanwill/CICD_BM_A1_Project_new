@@ -1,0 +1,46 @@
+# General
+.DS_Store
+*.log
+*.tmp
+*.swp
+
+# Node / tooling
+node_modules/
+
+# Flutter
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+ios/Pods/
+android/.gradle/
+
+# Dotnet
+bin/
+obj/
+*.user
+*.suo
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+
+# VSCode / Rider
+.vscode/
+.idea/
+
+# Generated
+dist/
+.env
+
+# IDE & build artifacts
+.vs/
+bin/
+obj/
+node_modules/
+

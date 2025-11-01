@@ -1,0 +1,37 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and push Docker image to ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: bma1pregproject.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and push image
+      run: |
+        docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} .
+        docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: todo-api-carmen
+        images: bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}

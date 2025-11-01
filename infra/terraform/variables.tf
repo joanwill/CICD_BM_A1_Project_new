@@ -1,0 +1,9 @@
+variable "env" { type = string }
+variable "location" { type = string }
+variable "resource_group" { type = string }
+variable "acr_name" { type = string }
+variable "cosmos_account" { type = string }
+variable "app_name" { type = string }
+variable "storage_name" { type = string }
+variable "docker_image_name" { type = string }
+variable "docker_image_tag" { type = string }

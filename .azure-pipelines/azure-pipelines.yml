@@ -1,0 +1,146 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+variables:
+  vmImage: 'ubuntu-latest'
+  DOCKER_IMAGE_NAME: 'fancy-todo-api'
+
+stages:
+- stage: CI
+  displayName: Build & Test
+  jobs:
+  - job: build_test
+    pool:
+      vmImage: $(vmImage)
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+    - script: |
+        sudo apt-get update
+        sudo snap install flutter --classic
+        flutter --version
+      displayName: 'Install Flutter (snap)'
+    - script: |
+        cd backend
+        dotnet restore
+        dotnet build --configuration Release
+        dotnet test --configuration Release --logger trx
+      displayName: 'Build & Test Backend'
+    - script: |
+        cd frontend/fancy_todo
+        flutter pub get
+        flutter test
+        flutter build web --release
+      displayName: 'Test & Build Frontend (Web)'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'frontend/fancy_todo/build/web'
+        ArtifactName: 'frontend-web'
+        publishLocation: 'Container'
+      displayName: 'Publish Frontend Artifact'
+    - task: Docker@2
+      displayName: 'Build backend image'
+      inputs:
+        containerRegistry: '$(SERVICE_CONNECTION)'
+        repository: '$(DOCKER_IMAGE_NAME)'
+        command: 'build'
+        Dockerfile: 'backend/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+
+- stage: Deploy_Dev
+  displayName: Deploy Dev
+  dependsOn: CI
+  jobs:
+  - deployment: dev
+    environment: 'dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: Docker@2
+            displayName: 'Push image to ACR (dev)'
+            inputs:
+              containerRegistry: '$(SERVICE_CONNECTION)'
+              repository: '$(DOCKER_IMAGE_NAME)'
+              command: 'push'
+              tags: |
+                $(Build.BuildId)
+          - task: AzureCLI@2
+            displayName: 'Terraform Init/Apply (dev)'
+            inputs:
+              azureSubscription: '$(SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -eux
+                cd infra/terraform
+                terraform init -upgrade
+                terraform apply -auto-approve                   -var="env=dev"                   -var="location=$(AZ_LOCATION)"                   -var="resource_group=$(AZ_RESOURCE_GROUP_DEV)"                   -var="acr_name=$(ACR_NAME_DEV)"                   -var="cosmos_account=$(COSMOS_ACCOUNT_DEV)"                   -var="app_name=$(APP_NAME_DEV)"                   -var="storage_name=$(STORAGE_NAME_DEV)"                   -var="docker_image_name=$(DOCKER_IMAGE_NAME)"                   -var="docker_image_tag=$(Build.BuildId)"
+          - task: AzureCLI@2
+            displayName: 'Deploy Frontend to Static Website (dev)'
+            inputs:
+              azureSubscription: '$(SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -eux
+                az storage blob service-properties update --account-name $(STORAGE_NAME_DEV) --static-website --index-document index.html --error-document index.html
+                ART_DIR=$(Pipeline.Workspace)/frontend-web
+                az storage blob upload-batch --account-name $(STORAGE_NAME_DEV) -s "$ART_DIR" -d '$web' --overwrite true
+
+- stage: Deploy_Prod
+  displayName: Deploy Prod
+  dependsOn: Deploy_Dev
+  condition: succeeded()
+  jobs:
+  - deployment: prod
+    environment: 'prod'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: Docker@2
+            displayName: 'Push image to ACR (prod)'
+            inputs:
+              containerRegistry: '$(SERVICE_CONNECTION)'
+              repository: '$(DOCKER_IMAGE_NAME)'
+              command: 'push'
+              tags: |
+                $(Build.BuildId)
+          - task: ManualValidation@0
+            inputs:
+              notifyUsers: ''
+              instructions: 'Approve to deploy to PROD.'
+              onTimeout: 'reject'
+              timeout: '0'
+          - task: AzureCLI@2
+            displayName: 'Terraform Init/Apply (prod)'
+            inputs:
+              azureSubscription: '$(SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -eux
+                cd infra/terraform
+                terraform init -upgrade
+                terraform apply -auto-approve                   -var="env=prod"                   -var="location=$(AZ_LOCATION)"                   -var="resource_group=$(AZ_RESOURCE_GROUP_PROD)"                   -var="acr_name=$(ACR_NAME_PROD)"                   -var="cosmos_account=$(COSMOS_ACCOUNT_PROD)"                   -var="app_name=$(APP_NAME_PROD)"                   -var="storage_name=$(STORAGE_NAME_PROD)"                   -var="docker_image_name=$(DOCKER_IMAGE_NAME)"                   -var="docker_image_tag=$(Build.BuildId)"
+          - task: AzureCLI@2
+            displayName: 'Deploy Frontend to Static Website (prod)'
+            inputs:
+              azureSubscription: '$(SERVICE_CONNECTION)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -eux
+                az storage blob service-properties update --account-name $(STORAGE_NAME_PROD) --static-website --index-document index.html --error-document index.html
+                ART_DIR=$(Pipeline.Workspace)/frontend-web
+                az storage blob upload-batch --account-name $(STORAGE_NAME_PROD) -s "$ART_DIR" -d '$web' --overwrite true

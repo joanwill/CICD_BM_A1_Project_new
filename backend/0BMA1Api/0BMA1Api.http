@@ -1,0 +1,6 @@
+@_0BMA1Api_HostAddress = http://localhost:5093
+
+GET {{_0BMA1Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
