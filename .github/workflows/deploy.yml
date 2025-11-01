@@ -40,6 +40,10 @@ jobs:
       run: terraform import azurerm_resource_group.prod-rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod"
       working-directory: ./terraform/prod
 
+    - name: Import existing App Service Plan
+      run: terraform import azurerm_app_service_plan.prod-plan "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.Web/serverfarms/todo-api-plan-prod"
+      working-directory: ./terraform/prod
+      
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform plan -out=tfplan
