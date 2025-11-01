@@ -3,8 +3,7 @@ name: Build and Deploy to Azure
 on:
   push:
     branches:
-      - main
-      # - release
+      - release
 
 jobs:
   build-and-deploy:
@@ -30,9 +29,8 @@ jobs:
       with:
         terraform_version: 1.5.7
 
-
-    - name: Terraform Init (Dev)
-      if: github.ref == 'refs/heads/main'
+    - name: Terraform Init (Prod)
+      if: github.ref == 'refs/heads/release'
       run: terraform init
       working-directory: ./terraform/prod
 
@@ -64,45 +62,30 @@ jobs:
       run: terraform import azurerm_cosmosdb_sql_container.prod-container "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject-prod/providers/Microsoft.DocumentDB/databaseAccounts/bma1cosmos/sqlDatabases/todo-db/containers/todo-items"
       working-directory: ./terraform/prod
 
-    - name: Terraform Plan (Dev)
-      if: github.ref == 'refs/heads/main'
+    - name: Terraform Plan (Prod)
+      if: github.ref == 'refs/heads/release'
       run: terraform plan -out=tfplan
       working-directory: ./terraform/prod
 
-    - name: Terraform Apply (Dev)
-      if: github.ref == 'refs/heads/main'
+    - name: Terraform Apply (Prod)
+      if: github.ref == 'refs/heads/release'
       run: terraform apply -auto-approve tfplan
       working-directory: ./terraform/prod
-
-    # - name: Terraform Init (Prod)
-    #   if: github.ref == 'refs/heads/release'
-    #   run: terraform init
-    #   working-directory: ./terraform/prod
-
-    # - name: Terraform Plan (Prod)
-    #   if: github.ref == 'refs/heads/release'
-    #   run: terraform plan -out=tfplan
-    #   working-directory: ./terraform/prod
-
-    # - name: Terraform Apply (Prod)
-    #   if: github.ref == 'refs/heads/release'
-    #   run: terraform apply -auto-approve tfplan
-    #   working-directory: ./terraform/prod
 
     - name: Build and push Docker image to ACR
       uses: azure/docker-login@v1
       with:
-        login-server: bma1pregproject.azurecr.io
+        login-server: acrprodtdo.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
     - name: Build and push image
       run: |
-        docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
-        docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
+        docker build -t acrprodtdo.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
+        docker push acrprodtdo.azurecr.io/todo-backend-api:${{ github.sha }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: todo-api-carmen
-        images: bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
+        images: acrprodtdo.azurecr.io/todo-backend-api:${{ github.sha }}
