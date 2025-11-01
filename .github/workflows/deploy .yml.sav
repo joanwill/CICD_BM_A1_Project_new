@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      # - release
+      - release
 
 jobs:
   build-and-deploy:
@@ -33,32 +33,32 @@ jobs:
     - name: Terraform Init (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform init
-      working-directory: ./terraform/prod
+      working-directory: ./terraform/dev
 
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform plan -out=tfplan
-      working-directory: ./terraform/prod
+      working-directory: ./terraform/dev
 
     - name: Terraform Apply (Dev)
       if: github.ref == 'refs/heads/main'
       run: terraform apply -auto-approve tfplan
+      working-directory: ./terraform/dev
+
+    - name: Terraform Init (Prod)
+      if: github.ref == 'refs/heads/release'
+      run: terraform init
       working-directory: ./terraform/prod
 
-    # - name: Terraform Init (Prod)
-    #   if: github.ref == 'refs/heads/release'
-    #   run: terraform init
-    #   working-directory: ./terraform/prod
+    - name: Terraform Plan (Prod)
+      if: github.ref == 'refs/heads/release'
+      run: terraform plan -out=tfplan
+      working-directory: ./terraform/prod
 
-    # - name: Terraform Plan (Prod)
-    #   if: github.ref == 'refs/heads/release'
-    #   run: terraform plan -out=tfplan
-    #   working-directory: ./terraform/prod
-
-    # - name: Terraform Apply (Prod)
-    #   if: github.ref == 'refs/heads/release'
-    #   run: terraform apply -auto-approve tfplan
-    #   working-directory: ./terraform/prod
+    - name: Terraform Apply (Prod)
+      if: github.ref == 'refs/heads/release'
+      run: terraform apply -auto-approve tfplan
+      working-directory: ./terraform/prod
 
     - name: Build and push Docker image to ACR
       uses: azure/docker-login@v1
