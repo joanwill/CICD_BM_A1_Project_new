@@ -72,12 +72,9 @@ jobs:
       run: terraform apply -auto-approve tfplan
       working-directory: ./terraform/prod
 
-    - name: Build and push Docker image to ACR
-      uses: azure/docker-login@v1
-      with:
-        login-server: acrprodtdo.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+    - name: Azure CLI login to ACR
+      run: |
+        az acr login --name acrprodtdo
 
     - name: Build and push image
       run: |
