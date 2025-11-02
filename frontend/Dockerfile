@@ -12,7 +12,7 @@ COPY --from=build /app/build/web /usr/share/nginx/html
 # COPY nginx.conf /etc/nginx/nginx.conf
 
 # ✅ Add this line to copy the .env file
-COPY --from=build /app/assets/.env /usr/share/nginx/html/assets/.env
+# COPY --from=build /app/assets/.env /usr/share/nginx/html/assets/.env
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
