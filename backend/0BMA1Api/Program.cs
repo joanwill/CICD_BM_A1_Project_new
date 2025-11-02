@@ -51,12 +51,7 @@ if (!string.IsNullOrWhiteSpace(endpoint) && !string.IsNullOrWhiteSpace(key))
     builder.Services.AddSingleton<ITodoRepository>(sp =>
     {
 
-         var client = new CosmosClient(endpoint, key);
-       // var connection = String.Format("AccountEndpoint={0};AccountKey={1}", endpoint, key);
-        //var client = new CosmosClient(connection);
-        //"AccountEndpoint=https://bma1project.documents.azure.com:443/;AccountKey=
-        //JVxoERmH913PyK9EKc7qEYJb6Pdb88YTjBzW1isgu4thdIniLQ7BqoQ4pfaa0dBWk5DMBgSX2OQdACDbAVTG2g==;");
-        //JVxoERm913PyK9EKc7qEYJb6Pdb88YTjBzW1isgu4thdIniLQ7BqoQ4pfaa0dBWk5DMBgSX2OQdACDbAVTG2g==;
+        var client = new CosmosClient(endpoint, key);
         var db = client.GetDatabase(database);
         var cont = db.GetContainer(container);
         return new CosmosTodoRepository(cont);
