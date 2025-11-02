@@ -1,7 +1,7 @@
 # 🏗️ Stage 1: Build Flutter Web App
 FROM ghcr.io/cirruslabs/flutter:stable AS build
 WORKDIR /app
-COPY . ./
+COPY fancy_todo/ ./
 RUN flutter pub get && flutter build web --release
 
 # 🖼️ Stage 2: Serve with Nginx
