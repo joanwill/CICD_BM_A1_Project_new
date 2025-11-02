@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'models/todo.dart';
 import 'services/api_client.dart';
+import 'package:uuid/uuid.dart';
 
 //import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -266,7 +267,7 @@ class _TodoDialogState extends State<TodoDialog> {
           onPressed: () {
             if (!_form.currentState!.validate()) return;
             final t = Todo(
-              id: widget.initial?.id ?? UniqueKey().toString(),
+              id: widget.initial?.id ?? Uuid().v4().toString(),
               title: title.text.trim(),
               description: desc.text.trim().isEmpty ? null : desc.text.trim(),
               priority: priority,
