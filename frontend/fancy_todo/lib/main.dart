@@ -110,7 +110,7 @@ class _TodoHomeState extends State<TodoHome> {
                             : 'No due date';
                         final priColor = [
                           null,
-                          Colors.green,
+                          Colors.lightBlue,
                           Colors.orange,
                           Colors.red
                         ][t.priority];
