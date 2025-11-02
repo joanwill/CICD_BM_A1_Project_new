@@ -31,34 +31,34 @@ jobs:
         terraform_version: 1.5.7
 
 
-    # - name: Terraform Init (Dev)
-    #   if: github.ref == 'refs/heads/main'
-    #   run: terraform init
-    #   working-directory: ./terraform/dev
+    - name: Terraform Init (Dev)
+       if: github.ref == 'refs/heads/main'
+       run: terraform init
+       working-directory: ./terraform/dev
 
-    # - name: Import existing resource group
-    #   run: terraform import azurerm_resource_group.rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject"
-    #   working-directory: ./terraform/dev
+    - name: Import existing resource group
+       run: terraform import azurerm_resource_group.rg "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject"
+       working-directory: ./terraform/dev
 
-    # - name: Import existing App Service Plan
-    #   run: terraform import azurerm_app_service_plan.plan "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.Web/serverFarms/todo-api-plan"
-    #   working-directory: ./terraform/dev
+    - name: Import existing App Service Plan
+       run: terraform import azurerm_app_service_plan.plan "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.Web/serverFarms/todo-api-plan"
+       working-directory: ./terraform/dev
 
-    # - name: Import existing Container Registry
-    #   run: terraform import azurerm_container_registry.acr "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.ContainerRegistry/registries/bma1pregproject"
-    #   working-directory: ./terraform/dev
+    - name: Import existing Container Registry
+       run: terraform import azurerm_container_registry.acr "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.ContainerRegistry/registries/bma1pregproject"
+       working-directory: ./terraform/dev
     
     
 
-    # - name: Terraform Plan (Dev)
-    #   if: github.ref == 'refs/heads/main'
-    #   run: terraform plan -out=tfplan
-    #   working-directory: ./terraform/dev
+    - name: Terraform Plan (Dev)
+       if: github.ref == 'refs/heads/main'
+       run: terraform plan -out=tfplan
+       working-directory: ./terraform/dev
 
-    # - name: Terraform Apply (Dev)
-    #   if: github.ref == 'refs/heads/main'
-    #   run: terraform apply -auto-approve tfplan
-    #   working-directory: ./terraform/dev
+    - name: Terraform Apply (Dev)
+       if: github.ref == 'refs/heads/main'
+       run: terraform apply -auto-approve tfplan
+       working-directory: ./terraform/dev
 
    
 
