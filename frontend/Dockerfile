@@ -15,4 +15,4 @@ COPY --from=build /app/build/web /usr/share/nginx/html
 # COPY --from=build /app/assets/.env /usr/share/nginx/html/assets/.env
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
