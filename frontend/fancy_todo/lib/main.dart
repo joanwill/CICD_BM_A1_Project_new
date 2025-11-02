@@ -3,16 +3,16 @@ import 'package:intl/intl.dart';
 import 'models/todo.dart';
 import 'services/api_client.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-  runApp(FancyTodoApp());
-}
-
-// void main() {
-//   runApp(const FancyTodoApp());
+// Future<void> main() async {
+//   await dotenv.load(fileName: ".env");
+//   runApp(FancyTodoApp());
 // }
+
+void main() {
+  runApp(const FancyTodoApp());
+}
 
 class FancyTodoApp extends StatelessWidget {
   const FancyTodoApp({super.key});
