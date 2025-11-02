@@ -31,10 +31,9 @@ namespace _0BMA1Api.Controllers
         {
             try
             {
-                //var input = new TodoItem { Description = "desc", Id = Guid.NewGuid().ToString()
-                //,Pk = "demo_on_line"};
-
-                //Repo.CreateAsync(input);
+                // uncomment this  to break the test
+                //var item = Repo.GetAsync("string", "hotpartition");
+                //if ( item == null) { return Enumerable.Empty<TodoItem>(); }
 
                 return Repo.GetAllAsync().GetAwaiter().GetResult();
             }
