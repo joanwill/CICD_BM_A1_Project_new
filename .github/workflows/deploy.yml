@@ -84,5 +84,5 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
-        app-name: todo-api-carmen
+        app-name: todo-api-webapp-prod
         images: acrprodtdo.azurecr.io/todo-backend-api:${{ github.sha }}
