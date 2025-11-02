@@ -1,10 +1,9 @@
-name: Build and Deploy to Azure
+﻿name: Build and Deploy to Azure
 
 on:
   push:
     branches:
       - main
-      # - release
 
 jobs:
   build-and-deploy:
@@ -20,6 +19,66 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # 🔹 Install .NET 8 (needed for restore/build/test)
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    # 🔹 Restore API + test projects (adjust paths if different)
+    - name: dotnet restore
+      run: |
+        dotnet restore backend/0BMA1Api/0BMA1Api.csproj
+        dotnet restore backend/tests/Todo.Api.UnitTests/Todo.Api.UnitTests.csproj
+        dotnet restore backend/tests/Todo.Api.IntegrationTests/Todo.Api.IntegrationTests.csproj
+
+    # 🔹 Build (fail fast if code doesn’t compile)
+    - name: dotnet build (Release)
+      run: |
+        dotnet build backend/0BMA1Api/0BMA1Api.csproj -c Release --no-restore
+        dotnet build backend/tests/Todo.Api.UnitTests/Todo.Api.UnitTests.csproj -c Release --no-restore
+        dotnet build backend/tests/Todo.Api.IntegrationTests/Todo.Api.IntegrationTests.csproj -c Release --no-restore
+
+    # 🔹 Run unit tests (always upload results)
+    - name: dotnet test – Unit
+      run: |
+        dotnet test backend/tests/Todo.Api.UnitTests/Todo.Api.UnitTests.csproj \
+          -c Release --no-build \
+          --logger "trx;LogFileName=unit.trx" \
+          --results-directory ./TestResults
+      continue-on-error: false
+
+    - name: Upload unit test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-test-results
+        path: ./TestResults/unit.trx
+        if-no-files-found: ignore
+
+    # # 🔹 Run integration tests
+    # # If your integration tests hit Cosmos or live services, either mock DI in tests
+    # # or skip them here via a filter (example below commented out).
+    # - name: dotnet test – Integration
+    #   run: |
+    #     dotnet test backend/tests/Todo.Api.IntegrationTests/Todo.Api.IntegrationTests.csproj \
+    #       -c Release --no-build \
+    #       --logger "trx;LogFileName=integration.trx" \
+    #       --results-directory ./TestResults
+    #   continue-on-error: false
+    #   # If you need to skip some category:
+    #   # run: dotnet test ... --filter "TestCategory!=RequiresCloud"
+
+    # - name: Upload integration test results
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: integration-test-results
+    #     path: ./TestResults/integration.trx
+    #     if-no-files-found: ignore
+
+    # ——— everything below runs only if tests passed ———
+
     - name: Log in to Azure
       uses: azure/login@v1
       with:
@@ -29,7 +88,6 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.5.7
-
 
     - name: Terraform Init (Dev)
       if: github.ref == 'refs/heads/main'
@@ -47,8 +105,6 @@ jobs:
     - name: Import existing Container Registry
       run: terraform import azurerm_container_registry.acr "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.ContainerRegistry/registries/bma1pregproject"
       working-directory: ./terraform/dev
-    
-    
 
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
@@ -60,26 +116,22 @@ jobs:
       run: terraform apply -auto-approve tfplan
       working-directory: ./terraform/dev
 
-   
-
     - name: Azure CLI login to ACR
-      run: |
-        az acr login --name bma1pregproject
+      run: az acr login --name bma1pregproject
 
-    - name: Build and push image
+    - name: Build and push image (backend)
       run: |
         docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
         docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
-  
 
-    - name: Build Flutter Web frontend Docker image
+    - name: Build frontend image (Flutter Web)
       run: docker build -t bma1pregproject.azurecr.io/fancy-todo-frontend:latest -f Dockerfile .
       working-directory: ./frontend
 
-    - name: Push frontend Docker image to ACR
+    - name: Push frontend image to ACR
       run: docker push bma1pregproject.azurecr.io/fancy-todo-frontend:latest
-      
-    - name: Deploy to Azure Web App
+
+    - name: Deploy to Azure Web App (container)
       uses: azure/webapps-deploy@v2
       with:
         app-name: todo-api-carmen
