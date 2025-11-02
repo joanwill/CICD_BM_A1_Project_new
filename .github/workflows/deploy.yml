@@ -105,6 +105,10 @@ jobs:
     - name: Import existing Container Registry
       run: terraform import azurerm_container_registry.acr "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.ContainerRegistry/registries/bma1pregproject"
       working-directory: ./terraform/dev
+    
+    - name: Import existing App Service
+      run: terraform import azurerm_app_service.webapp "/subscriptions/${{ env.ARM_SUBSCRIPTION_ID }}/resourceGroups/BM_A1CICDProject/providers/Microsoft.Web/sites/todofrontendweb"
+      working-directory: ./terraform/dev
 
     - name: Terraform Plan (Dev)
       if: github.ref == 'refs/heads/main'
