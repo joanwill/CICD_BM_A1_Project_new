@@ -98,8 +98,15 @@ class _TodoHomeState extends State<TodoHome> {
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, i) {
                         final t = items[i];
-                        final dueStr = t.due != null ? DateFormat.yMMMd().format(t.due!) : 'No due date';
-                        final priColor = [null, Colors.green, Colors.orange, Colors.red][t.priority];
+                        final dueStr = t.due != null
+                            ? DateFormat.yMMMd().format(t.due!)
+                            : 'No due date';
+                        final priColor = [
+                          null,
+                          Colors.lightBlue,
+                          Colors.orange,
+                          Colors.red
+                        ][t.priority];
                         return Material(
                           elevation: 1,
                           borderRadius: BorderRadius.circular(16),
