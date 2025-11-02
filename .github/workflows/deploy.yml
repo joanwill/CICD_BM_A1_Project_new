@@ -73,7 +73,7 @@ jobs:
 
     - name: Build Flutter Web frontend Docker image
       run: docker build -t bma1pregproject.azurecr.io/fancy-todo-frontend:latest -f Dockerfile .
-      # working-directory: ./frontend/fancy_todo
+      working-directory: ./frontend
 
     - name: Push frontend Docker image to ACR
       run: docker push bma1pregproject.azurecr.io/fancy-todo-frontend:latest
