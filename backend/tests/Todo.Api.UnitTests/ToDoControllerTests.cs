@@ -44,7 +44,7 @@ namespace Todo.Api.UnitTests
             var ctrl = CreateController();
             _todoRepository.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<TodoItem> { new TodoItem
             {
-                Due = DateTime.Now.AddDays(-1),
+                Due = DateTime.Now.AddDays(1),
                 UserId = Guid.NewGuid().ToString(),
                 Description = "descript"
             }
