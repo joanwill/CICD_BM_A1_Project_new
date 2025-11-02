@@ -62,17 +62,14 @@ jobs:
 
    
 
-    - name: Build and push Docker image to ACR
-      uses: azure/docker-login@v1
-      with:
-        login-server: bma1pregproject.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+    - name: Azure CLI login to ACR
+      run: |
+        az acr login --name bma1pregproject
 
     - name: Build and push image
       run: |
-        docker build -t acrprodtdo.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
-        docker push acrprodtdo.azurecr.io/todo-backend-api:${{ github.sha }}
+        docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
+        docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
   
 
     - name: Build Flutter Web frontend Docker image
