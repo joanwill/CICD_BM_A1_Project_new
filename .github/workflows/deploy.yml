@@ -69,17 +69,18 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - name: Build and push image
-      run: |
-        docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
-        docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
+  
 
     - name: Build Flutter Web frontend Docker image
-      run: docker build -t bma1pregproject.azurecr.io/fancy-todo-frontend:latest -f Dockerfile .
+      run: docker build -t bma1pregproject.azurecr.io/fancy-todo-frontend:latest -f Dockerfile ./frontend
       # working-directory: ./frontend/fancy_todo
 
     - name: Push frontend Docker image to ACR
       run: docker push bma1pregproject.azurecr.io/fancy-todo-frontend:latest
+
+    - name: Build and push image
+      run: docker build -t bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }} ./backend
+        docker push bma1pregproject.azurecr.io/todo-backend-api:${{ github.sha }}
       
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
