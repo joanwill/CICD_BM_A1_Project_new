@@ -35,7 +35,7 @@ namespace _0BMA1Api.Controllers
                 //var item = Repo.GetAsync("string", "hotpartition");
                 //if ( item == null) { return Enumerable.Empty<TodoItem>(); }
 
-                //CARMEN uncomment this to show the changes once deployed
+                //CARMEN uncomment this to show the changes once deployedf
                 //return Repo.GetAllAsync().GetAwaiter().GetResult().Take(1);
 
                 return Repo.GetAllAsync().GetAwaiter().GetResult();
