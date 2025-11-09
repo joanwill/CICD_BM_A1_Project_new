@@ -36,9 +36,9 @@ namespace _0BMA1Api.Controllers
                 //if ( item == null) { return Enumerable.Empty<TodoItem>(); }
 
                 //CARMEN uncomment this to show the changes once deployed
-                //return Repo.GetAllAsync().GetAwaiter().GetResult().Take(1);
+                return Repo.GetAllAsync().GetAwaiter().GetResult().Take(1);
 
-                return Repo.GetAllAsync().GetAwaiter().GetResult();
+                //return Repo.GetAllAsync().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
