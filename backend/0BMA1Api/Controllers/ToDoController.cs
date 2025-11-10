@@ -37,8 +37,8 @@ namespace _0BMA1Api.Controllers
 
 
                 //CARMEN uncoment
-                return Repo.GetAllAsync().GetAwaiter().GetResult().Take(1);
-                //return Repo.GetAllAsync().GetAwaiter().GetResult();
+                //return Repo.GetAllAsync().GetAwaiter().GetResult().Take(1);
+                return Repo.GetAllAsync().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {

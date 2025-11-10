@@ -35,7 +35,7 @@ namespace Todo.Api.UnitTests
             ,new TodoItem(),new TodoItem(),new TodoItem(),new TodoItem()});
             var result = ctrl.GetItem();
             result.Should().NotBeNull();
-            result.Count().Should().Be(1, "the template endpoint returns 5 entries");
+            result.Count().Should().Be(5, "the template endpoint returns 5 entries");
         }
 
         [TestMethod]
